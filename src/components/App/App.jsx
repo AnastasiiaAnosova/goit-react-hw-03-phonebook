@@ -13,14 +13,13 @@ class App extends Component {
   };
 
   componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const contactsExist = JSON.parse(contacts);
-
-    if (!contactsExist) return;
-    this.setState({ contacts: contactsExist });
+    const localData = localStorage.getItem('contacts');
+    if (localData && JSON.parse(localData).length) {
+      this.setState({ contacts: JSON.parse(localData) });
+    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_, prevState) {
     const currentContacts = this.state.contacts;
     if (currentContacts !== prevState.contacts) {
       localStorage.setItem('contacts', JSON.stringify(currentContacts));
@@ -57,16 +56,13 @@ class App extends Component {
   }
 
   render() {
-    const { filter } = this.state;
     const filteredContacts = this.searchContact();
     return (
       <AppContainer>
         <Header>Phonebook</Header>
         <CreateContact createContact={this.createContact} />
         <Header>Contacts</Header>
-        {/* <SearchContact searchContact={this.searchContact} /> */}
-        <SearchContact filter={filter} handleSearchChange={this.handleSearchChange} />
-        {/* <ContactList contacts={this.state.contacts} /> */}
+        <SearchContact handleSearchChange={this.handleSearchChange} />
         <ContactList contacts={filteredContacts} deleteContact={this.deleteContact} />
       </AppContainer>
     );
